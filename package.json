@@ -1,5 +1,5 @@
 {
-  "name": "extension-dicom-model-prediction",
+  "name": "@ohif/extension-dicom-model-prediction",
   "version": "0.0.1",
   "description": "OHIF extension for AI model prediction",
   "author": "Banura Randika",

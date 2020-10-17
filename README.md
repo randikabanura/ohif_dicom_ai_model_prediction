@@ -1,4 +1,4 @@
-# @ohif/extension-model-predication
+# dicom-model-predication
 
 This project is an OHIF extension that can be used with the Core OHIF Platform,
 either at runtime, or as an ES6 dependency, to create a medical image viewing
@@ -6,7 +6,7 @@ application with AI prediction part integrated in to the viewer.
 
 ## About
 
-...
+
 
 ## Scope
 
