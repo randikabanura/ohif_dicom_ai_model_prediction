@@ -1,10 +1,13 @@
 {
-  "name": "@ohif/extension-dicom-model-prediction",
+  "name": "extension-dicom-model-prediction",
   "version": "0.0.1",
-  "description": "OHIF extension for Lesion Tracker",
-  "author": "OHIF",
+  "description": "OHIF extension for AI model prediction",
+  "author": "Banura Randika",
   "license": "MIT",
-  "repository": "OHIF/Viewers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/randikabanura/dicom-model-prediction"
+  },
   "main": "dist/index.umd.js",
   "module": "src/index.js",
   "publishConfig": {
@@ -21,7 +24,7 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack --config .webpack/webpack.dev.js --watch --debug --output-pathinfo",
-    "dev:lesion-tracker": "yarn run dev",
+    "dev:model-prediction": "yarn run dev",
     "build": "cross-env NODE_ENV=production webpack --config .webpack/webpack.prod.js",
     "build:package": "yarn run build",
     "prepublishOnly": "yarn run build",
@@ -35,6 +38,24 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "classnames": "^2.2.6"
+    "classnames": "^2.2.6",
+    "cross-env": "^7.0.2"
+  },
+  "bugs": {
+    "url": "https://github.com/randikabanura/dicom-model-prediction/issues"
+  },
+  "homepage": "https://github.com/randikabanura/dicom-model-prediction#readme",
+  "keywords": [
+    "ohif",
+    "dicom",
+    "extension",
+    "ai",
+    "prediction",
+    "deep-learning",
+    "api"
+  ],
+  "devDependencies": {
+    "webpack": "^5.1.3",
+    "webpack-cli": "^4.0.0"
   }
 }
