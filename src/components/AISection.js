@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import stateDetails from '../state';
 import cornerstone from 'cornerstone-core';
+import cornerstoneTools from 'cornerstone-tools';
 
 class AISection extends Component {
   state = {
@@ -73,6 +74,8 @@ class AISection extends Component {
   handlePredictionClick = event => {
     event.preventDefault();
 
+    const { UINotificationService } = this.props.servicesManager.services;
+
     const input = document.getElementById('model-selection');
     const modelId = input.value;
     var found = stateDetails.modelsDetails.filter(function(data) {
@@ -82,30 +85,110 @@ class AISection extends Component {
     const endpoint = `${found[0].predictionApi}`;
     const activeEnabledElement = cornerstone.getEnabledElements()[0];
     const formData = new FormData();
-    const imageBlob = this.dataURItoBlob(
-      activeEnabledElement.canvas.toDataURL()
-    );
+    let imageBlob = null
+    if(typeof activeEnabledElement.image.getCanvas  === "function") {
+      imageBlob = this.dataURItoBlob(
+          activeEnabledElement.image.getCanvas().toDataURL()
+      );
+    }else {
+      imageBlob = this.dataURItoBlob(
+          activeEnabledElement.canvas.toDataURL()
+      );
+    }
 
     formData.append('image', imageBlob);
     formData.append('modelId', modelId);
+    formData.append('rows', activeEnabledElement.image.rows);
+    formData.append('columns', activeEnabledElement.image.columns);
 
     const requestOptions = {
       method: 'POST',
       body: formData,
     };
 
+    const pendingNotificationId = UINotificationService.show({
+      title: 'Pending',
+      message: 'Trying to process the request',
+      position: 'bottomLeft',
+    });
+
     fetch(endpoint, requestOptions)
       .then(response => response.json())
       .then(responseJson => {
-        stateDetails.predictionResults = responseJson.data;
+        stateDetails.predictionResults = responseJson.data.attributes;
+        if (responseJson.data.sections) {
+          stateDetails.sectionResults = responseJson.data.sections;
+        }
         document
           .getElementsByClassName('tab-list-item results-section')[0]
           .click();
+
+        stateDetails.sectionResults.map(function(sectionItem) {
+          if (sectionItem.start && sectionItem.end) {
+            this.drawRect(sectionItem.start, sectionItem.end);
+          }
+        }, this);
+        UINotificationService.hide({ pendingNotificationId });
+        UINotificationService.show({
+          title: 'Success',
+          message: 'Successfully gained prediction results!!!',
+          position: 'bottomLeft',
+          duration: 4000,
+          type: 'success',
+        });
       })
       .catch(error => {
         return console.log(error);
       });
   };
+
+  drawRect(start_data, end_data) {
+    const activeEnabledElement = cornerstone.getEnabledElements()[0];
+
+    if (!activeEnabledElement) {
+      return;
+    }
+
+    const canvas = activeEnabledElement.canvas;
+    const context = canvas.getContext('2d');
+    const element = activeEnabledElement.element;
+
+    var start = { x: start_data.x, y: start_data.y };
+    var end = { x: end_data.x, y: end_data.y };
+
+    const measurementData = {
+      visible: true,
+      active: true,
+      invalidated: true,
+      handles: {
+        start: {
+          x: start.x,
+          y: start.y,
+          highlight: true,
+          active: false,
+        },
+        end: {
+          x: end.x,
+          y: end.y,
+          highlight: true,
+          active: true,
+        },
+        textBox: {
+          active: false,
+          hasMoved: false,
+          movesIndependently: false,
+          drawnIndependently: true,
+          allowedOutsideImage: true,
+          hasBoundingBox: true,
+        },
+      },
+    };
+
+    // cornerstoneTools.clearToolState(element, 'RectangleRoi');
+    // const toolData = cornerstoneTools.getToolState(element, 'rectangleRoi');
+    // console.log(toolData)
+    cornerstoneTools.addToolState(element, 'RectangleRoi', measurementData);
+  }
 
   componentDidMount() {
     const input = document.getElementById('model-selection');

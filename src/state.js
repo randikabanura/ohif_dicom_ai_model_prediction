@@ -1,3 +1,3 @@
-const stateDetails = { modelsDetails: [], predictionResults: [], options: {} };
+const stateDetails = { modelsDetails: [], predictionResults: [], sectionResults: [], options: {} };
 
 export default stateDetails;

@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const merge = require('webpack-merge');
 const path = require('path');
 const webpackCommon = require('./../../../.webpack/webpack.commonjs.js');
@@ -35,10 +34,5 @@ module.exports = (env, argv) => {
       libraryExport: 'default',
       filename: pkg.main,
     },
-    plugins: [
-      new webpack.optimize.LimitChunkCountPlugin({
-        maxChunks: 1,
-      }),
-    ],
   });
 };
